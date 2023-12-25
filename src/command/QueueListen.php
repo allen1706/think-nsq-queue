@@ -44,6 +44,7 @@ class QueueListen extends Command
         $topic    = $input->getOption('topic') ?: $this->app->config->get('nsq.topic');
         $channel  = $input->getOption('channel') ?: $this->app->config->get('nsq.channel');
         $endpoint = $this->app->config->get('nsq.endpoint');
+		$debug    = $this->app->env->get('APP_DEBUG', false);
 
         $endpoint = new Endpoint($endpoint);
         Queue::subscribe(
@@ -57,7 +58,7 @@ class QueueListen extends Command
                 $hasAt  = str_contains($action, '@');
                 $hasSlash = str_contains($action, '\\');
 
-                if ($this->app->config->get('app_debug')) {
+                if ($debug) {
                     $output->writeln(sprintf("GOT %s %s %s %s",
                         $message->id(),
                         $message->payload(),
