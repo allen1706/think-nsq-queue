@@ -51,7 +51,7 @@ class QueueListen extends Command
             endpoint: $endpoint,
             topic: $topic,
             channel: $channel,
-            processor: function (Message $message) use ($output) {
+            processor: function (Message $message) use ($output, $debug) {
                 $payload = json_decode($message->payload(), true);
                 $action = $payload['action'];
                 $data   = $payload['data'];
