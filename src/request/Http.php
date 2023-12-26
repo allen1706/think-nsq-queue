@@ -18,6 +18,9 @@ class Http
         if (class_exists("GuzzleHttp\Client")) {
             return self::GuzzlePost($url, $data, $header);
         }
+        $header = array_merge([
+            'Content-Type' => 'application/json',
+        ], $header);
         return self::CurlPost($url, $data, $header);
     }
 
