@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace annon\queue;
 
+use annon\queue\request\Http;
+
 class Queue
 {
     /**
@@ -29,13 +31,7 @@ class Queue
             'data'   => $data,
         ];
         $url = sprintf("%s/pub?topic=%s&channel=%s", $nsqd, $topic, $channel);
-        $res = file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => 'Content-Type: application/json',
-                'content' => json_encode($arr, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES),
-            ],
-        ]));
+        $res = Http::post($url, $arr);
 
         if ($res === 'OK') {
             return true;
@@ -72,13 +68,7 @@ class Queue
             'data'   => $data,
         ];
         $url = sprintf("%s/pub?topic=%s&channel=%s&defer=%s", $nsqd, $topic, $channel, $delay);
-        $res = file_get_contents($url, false, stream_context_create([
-            'http' => [
-                'method' => 'POST',
-                'header' => 'Content-Type: application/json',
-                'content' => json_encode($arr, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES),
-            ],
-        ]));
+        $res = Http::post($url, $arr);
 
         if ($res === 'OK') {
             return true;

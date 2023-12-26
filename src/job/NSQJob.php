@@ -1,12 +1,11 @@
 <?php
-
 declare(strict_types=1);
+
 namespace annon\queue\job;
 
 use NSQClient\Contract\Message;
-use think\queue\Job;
 
-class NSQJob extends Job
+class NSQJob
 {
     public function __construct(
         protected Message &$message,

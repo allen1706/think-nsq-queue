@@ -41,17 +41,18 @@ class QueueListen extends Command
     protected function execute(Input $input, Output $output): void
     {
         $output->writeln("start listen queue");
-        $topic    = $input->getOption('topic') ?: $this->app->config->get('nsq.topic');
-        $channel  = $input->getOption('channel') ?: $this->app->config->get('nsq.channel');
-        $endpoint = $this->app->config->get('nsq.endpoint');
-		$debug    = $this->app->env->get('APP_DEBUG', false);
+        $topic     = $input->getOption('topic') ?: $this->app->config->get('nsq.topic');
+        $channel   = $input->getOption('channel') ?: $this->app->config->get('nsq.channel');
+        $endpoint  = $this->app->config->get('nsq.endpoint');
+		$debug     = $this->app->env->get('APP_DEBUG', false);
+        $max_tries = $this->app->config->get('nsq.max_tries', 3);
 
         $endpoint = new Endpoint($endpoint);
         Queue::subscribe(
             endpoint: $endpoint,
             topic: $topic,
             channel: $channel,
-            processor: function (Message $message) use ($output, $debug) {
+            processor: function (Message $message) use ($output, $debug, $max_tries) {
                 $payload = json_decode($message->payload(), true);
                 $action = $payload['action'];
                 $data   = $payload['data'];
@@ -85,6 +86,16 @@ class QueueListen extends Command
                 $job = new $class();
                 // 执行方法
                 $job->$method($bridge, $data);
+                // 任务执行成功需要手动删除
+                // 如果任务达到最大重试次数依旧失败
+                if ($bridge->attempts() > $max_tries) {
+                    // 判断方法是否存在
+                    if (method_exists($job, 'failed')) {
+                        $job->failed($data);
+                    } else {
+                        $output->writeln(sprintf("Job %s has failed", $message->id()));
+                    }
+                }
             }
         );
     }

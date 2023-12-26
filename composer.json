@@ -10,7 +10,6 @@
     ],
     "require": {
         "annon/nsqclient": "~0.0.2",
-        "topthink/think-queue": "~3.0",
         "topthink/framework": "^6.0 || ^8.0"
     },
     "autoload": {
