@@ -1,5 +1,5 @@
 {
-    "name": "annon/think-nsq-queue",
+    "name": "siujyu/think-nsq-queue",
     "description": "nsq client for thinkphp",
     "license": "Apache-2.0",
     "authors": [
@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "annon/nsqclient": "~0.0.2",
+        "siujyu/nsqclient": "~1.0",
         "topthink/framework": "^6.0 || ^8.0"
     },
     "autoload": {
